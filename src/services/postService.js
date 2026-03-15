@@ -36,7 +36,7 @@ export function getPosts({ page = 1, limit = 10 }) {
 export function createPost({ user, content, media = null }) {
   const posts = readPosts();
 
-  const post = {
+const post = {
   id: Date.now(),
   user,
   content,
@@ -45,6 +45,10 @@ export function createPost({ user, content, media = null }) {
   likedBy: [],
   comments: [],
   createdAt: new Date().toISOString(),
+};
+
+};
+
 };
 
   };
