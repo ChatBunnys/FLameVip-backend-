@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth.js";
 import feedRoutes from "./routes/feed.js";
 import adminRoutes from "./routes/admin.js";
 import uploadRoutes from "./routes/upload.js";
+import userRoutes from "./routes/user.js";
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use("/feed", feedRoutes);
 app.use("/admin", adminRoutes);
 app.use("/upload", uploadRoutes);
 app.use("/uploads", express.static("uploads"));
+app.use("/users", userRoutes);
 
 // ---- Start ----
 const PORT = process.env.PORT || 3000;
