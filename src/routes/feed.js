@@ -1,31 +1,17 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/authMiddleware.js";
+import {
+  getFeed,
+  createFeedPost,
+  likeFeedPost,
+  commentOnPost,
+} from "../controllers/postController.js";
 
 const router = Router();
 
-let posts = [];
-
-router.get("/", verifyToken, (req, res) => {
-  res.json(posts);
-});
-
-router.post("/create", verifyToken, (req, res) => {
-  const { content } = req.body;
-
-  if (!content) {
-    return res.status(400).json({ message: "Post content required" });
-  }
-
-  const post = {
-    id: Date.now(),
-    user: req.user.username,
-    content,
-    created: new Date()
-  };
-
-  posts.unshift(post);
-
-  res.json(post);
-});
+router.get("/", verifyToken, getFeed);
+router.post("/create", verifyToken, createFeedPost);
+router.post("/:id/like", verifyToken, likeFeedPost);
+router.post("/:id/comment", verifyToken, commentOnPost);
 
 export default router;
