@@ -19,7 +19,7 @@ export function verifyToken(req, res, next) {
   try {
     const decoded = jwt.verify(token, SECRET);
 
-    // ⭐ FIXED: attach the fields your app actually uses
+  
     req.user = {
       id: decoded.id,
       username: decoded.username || decoded.email || decoded.name || "unknown"
