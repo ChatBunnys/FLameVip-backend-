@@ -18,7 +18,7 @@ router.post("/create", verifyToken, (req, res) => {
 
   const post = {
     id: Date.now(),
-    user: req.user.username,
+    user: req. user.username,
     content,
     created: new Date()
   };
