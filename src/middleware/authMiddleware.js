@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 
 const SECRET = process.env.JWT_SECRET || "dev-secret-change-this";
+
 export function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
 
@@ -17,7 +18,13 @@ export function verifyToken(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, SECRET);
-    req.user = decoded;
+
+    // ⭐ FIXED: attach the fields your app actually uses
+    req.user = {
+      id: decoded.id,
+      username: decoded.username || decoded.email || decoded.name || "unknown"
+    };
+
     next();
   } catch {
     return res.status(401).json({ error: "Invalid token" });
