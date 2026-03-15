@@ -1,23 +1,31 @@
-/ create new post
-router.post("/create", verifyToken, (req, res) => {
+import { Router } from "express";
+import { verifyToken } from "../middleware/authMiddleware.js";
 
+const router = Router();
+
+let posts = [];
+
+router.get("/", verifyToken, (req, res) => {
+  res.json(posts);
+});
+
+router.post("/create", verifyToken, (req, res) => {
   const { content } = req.body;
 
-  if(!content){
-    return res.status(400).json({ message:"Post content required" });
   if (!content) {
     return res.status(400).json({ message: "Post content required" });
   }
 
   const post = {
-@@ -30,7 +29,9 @@ router.post("/create", verifyToken, (req, res) => {
+    id: Date.now(),
+    user: req.user.username,
+    content,
+    created: new Date()
+  };
+
   posts.unshift(post);
 
   res.json(post);
-
 });
 
 export default router;
-
-
-  
