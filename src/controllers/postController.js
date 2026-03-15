@@ -21,7 +21,7 @@ export function createFeedPost(req, res) {
   }
 
   const post = createPost({
-    user: req.user.username, // must be set by verifyToken
+    user: req.user.username,
     content,
   });
 
