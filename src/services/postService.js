@@ -46,11 +46,7 @@ const post = {
   comments: [],
   createdAt: new Date().toISOString(),
 };
-
-};
-
-};
-
+  {
   };
 
   posts.unshift(post);
@@ -85,7 +81,7 @@ export function addComment({ postId, user, text }) {
     text,
     createdAt: new Date().toISOString(),
   };
-
+  {
   post.comments.push(comment);
   writePosts(posts);
   return comment;
