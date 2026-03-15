@@ -36,17 +36,15 @@ export function getPosts({ page = 1, limit = 10 }) {
 export function createPost({ user, content, media = null }) {
   const posts = readPosts();
 
-const post = {
-  id: Date.now(),
-  user,
-  content,
-  media,   // ⭐ NEW
-  likes: 0,
-  likedBy: [],
-  comments: [],
-  createdAt: new Date().toISOString(),
-};
-  {
+  const post = {
+    id: Date.now(),
+    user,
+    content,
+    media,        // ⭐ NEW FIELD FOR IMAGES/VIDEOS
+    likes: 0,
+    likedBy: [],
+    comments: [],
+    createdAt: new Date().toISOString(),
   };
 
   posts.unshift(post);
@@ -81,7 +79,7 @@ export function addComment({ postId, user, text }) {
     text,
     createdAt: new Date().toISOString(),
   };
-  {
+
   post.comments.push(comment);
   writePosts(posts);
   return comment;
