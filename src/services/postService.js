@@ -33,17 +33,20 @@ export function getPosts({ page = 1, limit = 10 }) {
   };
 }
 
-export function createPost({ user, content }) {
+export function createPost({ user, content, media = null }) {
   const posts = readPosts();
 
   const post = {
-    id: Date.now(),
-    user,
-    content,
-    likes: 0,
-    likedBy: [],
-    comments: [],
-    createdAt: new Date().toISOString(),
+  id: Date.now(),
+  user,
+  content,
+  media,   // ⭐ NEW
+  likes: 0,
+  likedBy: [],
+  comments: [],
+  createdAt: new Date().toISOString(),
+};
+
   };
 
   posts.unshift(post);
