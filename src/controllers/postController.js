@@ -1,18 +1,37 @@
-import { Router } from "express";
-import { verifyToken } from "../middleware/authMiddleware.js";
+import jwt from "jsonwebtoken";
 
-import {
-  getFeed,
-  createFeedPost,
-  likeFeedPost,
-  commentOnPost,
-} from "../controllers/postController.js";
+const SECRET = process.env.JWT_SECRET || "dev-secret-change-this";
 
-const router = Router();
+export function verifyToken(req, res, next) {
+  const authHeader = req.headers.authorization;
 
-router.get("/", verifyToken, getFeed);
-router.post("/create", verifyToken, createFeedPost);
-router.post("/:id/like", verifyToken, likeFeedPost);
-router.post("/:id/comment", verifyToken, commentOnPost);
+  // No Authorization header provided
+  if (!authHeader) {
+    return res.status(401).json({ error: "No token provided" });
+  }
 
-export default router;
+  // Expecting "Bearer <token>"
+  const [scheme, token] = authHeader.split(" ");
+
+  if (scheme !== "Bearer" || !token) {
+    return res.status(401).json({ error: "Invalid authorization format" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET);
+
+    // Normalize user info from token
+    req.user = {
+      id: decoded.id,
+      username:
+        decoded.username ||
+        decoded.email ||
+        decoded.name ||
+        "unknown"
+    };
+
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+}
