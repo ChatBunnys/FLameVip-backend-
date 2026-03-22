@@ -2,18 +2,26 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+// Resolve directory paths for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Data file locations
 const usersFile = path.join(__dirname, "..", "..", "data", "users.json");
 const postsFile = path.join(__dirname, "..", "..", "data", "posts.json");
 
-function readJSON(file) {
-  if (!fs.existsSync(file)) return [];
-  const raw = fs.readFileSync(file, "utf8") || "[]";
-  return JSON.parse(raw);
+// Safe JSON reader
+function readJSON(filePath) {
+  if (!fs.existsSync(filePath)) return [];
+  try {
+    const raw = fs.readFileSync(filePath, "utf8") || "[]";
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
 }
 
+// Get a user's profile + posts
 export function getUserProfile(username) {
   const users = readJSON(usersFile);
   const posts = readJSON(postsFile);
