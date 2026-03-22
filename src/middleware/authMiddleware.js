@@ -5,12 +5,12 @@ const SECRET = process.env.JWT_SECRET || "dev-secret-change-this";
 export function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
 
-  // No Authorization header
+  // No Authorization header provided
   if (!authHeader) {
     return res.status(401).json({ error: "No token provided" });
   }
 
-  // Must be "Bearer <token>"
+  // Expecting "Bearer <token>"
   const [scheme, token] = authHeader.split(" ");
 
   if (scheme !== "Bearer" || !token) {
@@ -20,7 +20,7 @@ export function verifyToken(req, res, next) {
   try {
     const decoded = jwt.verify(token, SECRET);
 
-    // Attach normalized user info
+    // Normalize user info from token
     req.user = {
       id: decoded.id,
       username:
@@ -30,7 +30,7 @@ export function verifyToken(req, res, next) {
         "unknown"
     };
 
-    return next();
+    next();
   } catch (err) {
     return res.status(401).json({ error: "Invalid token" });
   }
