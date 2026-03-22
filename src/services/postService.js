@@ -1,75 +1,79 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const postsFile = path.join(process.cwd(), "data", "posts.json");
 
-const postsFile = path.join(__dirname, "..", "..", "data", "posts.json");
-
+// Read posts from file
 function readPosts() {
   if (!fs.existsSync(postsFile)) return [];
-  const raw = fs.readFileSync(postsFile, "utf8") || "[]";
-  return JSON.parse(raw);
+  const data = fs.readFileSync(postsFile, "utf8");
+  try {
+    return JSON.parse(data);
+  } catch {
+    return [];
+  }
 }
 
+// Write posts to file
 function writePosts(posts) {
   fs.writeFileSync(postsFile, JSON.stringify(posts, null, 2));
 }
 
+// Get paginated posts
 export function getPosts({ page = 1, limit = 10 }) {
-  const posts = readPosts().sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
+  const posts = readPosts();
 
   const start = (page - 1) * limit;
   const end = start + limit;
 
   return {
-    total: posts.length,
     page,
     limit,
-    data: posts.slice(start, end),
+    total: posts.length,
+    posts: posts.slice(start, end),
   };
 }
 
-export function createPost({ user, content, media = null }) {
+// Create a new post
+export function createPost({ user, content }) {
   const posts = readPosts();
 
   const post = {
     id: Date.now(),
     user,
     content,
-    media,        // ⭐ NEW FIELD FOR IMAGES/VIDEOS
-    likes: 0,
-    likedBy: [],
+    likes: [],
     comments: [],
     createdAt: new Date().toISOString(),
   };
 
   posts.unshift(post);
   writePosts(posts);
+
   return post;
 }
 
+// Like/unlike a post
 export function likePost({ postId, user }) {
   const posts = readPosts();
-  const post = posts.find(p => p.id === postId);
+  const post = posts.find((p) => p.id === postId);
 
   if (!post) return null;
 
-  if (!post.likedBy.includes(user)) {
-    post.likedBy.push(user);
-    post.likes = post.likedBy.length;
-    writePosts(posts);
+  if (post.likes.includes(user)) {
+    post.likes = post.likes.filter((u) => u !== user);
+  } else {
+    post.likes.push(user);
   }
 
+  writePosts(posts);
   return post;
 }
 
+// Add a comment
 export function addComment({ postId, user, text }) {
   const posts = readPosts();
-  const post = posts.find(p => p.id === postId);
+  const post = posts.find((p) => p.id === postId);
 
   if (!post) return null;
 
@@ -82,5 +86,6 @@ export function addComment({ postId, user, text }) {
 
   post.comments.push(comment);
   writePosts(posts);
+
   return comment;
 }
