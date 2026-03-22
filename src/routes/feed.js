@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/authMiddleware.js";
+
 import {
   getFeed,
   createFeedPost,
