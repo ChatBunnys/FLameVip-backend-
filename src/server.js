@@ -7,8 +7,8 @@ import rateLimit from "express-rate-limit";
 import authRoutes from "./routes/auth.js";
 import feedRoutes from "./routes/feed.js";
 import adminRoutes from "./routes/admin.js";
-// ❌ REMOVE uploadRoutes
-// ❌ REMOVE userRoutes
+import uploadRoutes from "./routes/upload.js";
+import userRoutes from "./routes/user.js";
 
 const app = express();
 
@@ -38,11 +38,9 @@ app.get("/health", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/feed", feedRoutes);
 app.use("/admin", adminRoutes);
-
-// ❌ REMOVE these two lines:
-// app.use("/upload", uploadRoutes);
-// app.use("/uploads", express.static("uploads"));
-// app.use("/users", userRoutes);
+app.use("/upload", uploadRoutes);
+app.use("/uploads", express.static("uploads"));
+app.use("/users", userRoutes);
 
 // ---- Start ----
 const PORT = process.env.PORT || 3000;
