@@ -38,6 +38,8 @@ app.get("/health", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/feed", feedRoutes);
 app.use("/admin", adminRoutes);
+
+// These MUST exist for your app to work
 app.use("/upload", uploadRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use("/users", userRoutes);
