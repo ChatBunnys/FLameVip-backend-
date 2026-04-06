@@ -26,12 +26,13 @@ export function getPosts({ page = 1, limit = 10 }) {
   const start = (page - 1) * limit;
   const end = start + limit;
 
-  return {
-    page,
-    limit,
-    total: posts.length,
-    posts: posts.slice(start, end),
-  };
+ return {
+  ok: true,
+  data: posts.slice(start, end),  // Wrap posts in 'data'
+  page,
+  limit,
+  total: posts.length
+};
 }
 
 // Create a new post
