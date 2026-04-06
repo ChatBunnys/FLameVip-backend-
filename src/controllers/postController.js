@@ -1,37 +1,33 @@
-import jwt from "jsonwebtoken";
+import { 
+  getPosts, 
+  createPost, 
+  likePost, 
+  addComment 
+} from "../services/postService.js";
 
-const SECRET = process.env.JWT_SECRET || "dev-secret-change-this";
+export function handleGetPosts(req, res) {
+  const page = req.query.page || 1;
+  const result = getPosts({ page, limit: 10 });
+  res.json({ ok: true, data: result.posts, ...result });
+}
 
-export function verifyToken(req, res, next) {
-  const authHeader = req.headers.authorization;
+export function handleCreatePost(req, res) {
+  const { content, media } = req.body;
+  const post = createPost({ user: req.user.username, content, media });
+  res.json({ ok: true, post });
+}
 
-  // No Authorization header provided
-  if (!authHeader) {
-    return res.status(401).json({ error: "No token provided" });
-  }
+export function handleLikePost(req, res) {
+  const { id } = req.params;
+  const post = likePost({ postId: parseInt(id), user: req.user.username });
+  if (!post) return res.status(404).json({ error: "Post not found" });
+  res.json({ ok: true, post });
+}
 
-  // Expecting "Bearer <token>"
-  const [scheme, token] = authHeader.split(" ");
-
-  if (scheme !== "Bearer" || !token) {
-    return res.status(401).json({ error: "Invalid authorization format" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, SECRET);
-
-    // Normalize user info from token
-    req.user = {
-      id: decoded.id,
-      username:
-        decoded.username ||
-        decoded.email ||
-        decoded.name ||
-        "unknown"
-    };
-
-    next();
-  } catch (err) {
-    return res.status(401).json({ error: "Invalid token" });
-  }
+export function handleAddComment(req, res) {
+  const { id } = req.params;
+  const { text } = req.body;
+  const comment = addComment({ postId: parseInt(id), user: req.user.username, text });
+  if (!comment) return res.status(404).json({ error: "Post not found" });
+  res.json({ ok: true, comment });
 }
